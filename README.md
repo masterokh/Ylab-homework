@@ -1,4 +1,3 @@
-# Ylab-homework
 # Monitoring-Service
 
 Описание:
