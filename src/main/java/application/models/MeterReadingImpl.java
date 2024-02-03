@@ -1,5 +1,6 @@
 package application.models;
 
+import application.dto.MeterReadingFullDTO;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,5 +61,26 @@ public class MeterReadingImpl implements MeterReading {
      */
     public Map<String, Double> getReadings() {
         return readings;
+    }
+    /**
+     * Initializes the readings from the given map.
+     *
+     * @param readings The map containing meter readings to be initialized.
+     */
+    public void initializeReadings(Map<String, Double> readings) {
+        for (Map.Entry<String, Double> entry : readings.entrySet()) {
+            addReading(entry.getKey(), entry.getValue());
+        }
+    }
+
+    /**
+     * Converts MeterReadingImpl to MeterReadingFullDTO.
+     *
+     * @return The MeterReadingFullDTO object.
+     */
+    public MeterReadingFullDTO toDto() {
+        MeterReadingFullDTO dto = new MeterReadingFullDTO(this.getMonth(), this.getYear());
+        dto.setReadings(new HashMap<>(this.getReadings()));
+        return dto;
     }
 }

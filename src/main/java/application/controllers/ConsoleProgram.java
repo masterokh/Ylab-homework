@@ -1,13 +1,16 @@
-package application.in;
+package application.controllers;
 
 import application.dto.AdminFullDTO;
 import application.dto.MeterReadingFullDTO;
 import application.dto.UserFullDTO;
+import application.mappers.AdminMapper;
+import application.mappers.MeterReadingMapper;
+import application.mappers.UserMapper;
+import application.models.*;
 import application.services.AbstractUserService;
 import application.services.AbstractUserServiceImpl;
 import application.services.SetOfAllNamesOfMeterReadingService;
 import application.services.SetOfAllNamesOfMeterReadingServiceImpl;
-
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
@@ -26,15 +29,13 @@ public class ConsoleProgram {
     public static void start() {
         AbstractUserService abstractUserService = new AbstractUserServiceImpl();
         SetOfAllNamesOfMeterReadingService setOfAllNamesOfMeterReadingService = new SetOfAllNamesOfMeterReadingServiceImpl();
-        UserInputPort userInputPort = new UserInputPortImpl(abstractUserService);
-        AllNamesOfMeterReadingInputPort allNamesOfMeterReadingInputPort = new AllNamesOfMeterReadingInputPortImpl(setOfAllNamesOfMeterReadingService);
+        UserController userInputPort = new UserControllerImpl(abstractUserService);
+        AllNamesOfMeterReadingController allNamesOfMeterReadingInputPort = new AllNamesOfMeterReadingControllerImpl(setOfAllNamesOfMeterReadingService);
         userInputPort.registerNewAdmin("admin","12345");
 
-        allNamesOfMeterReadingInputPort.addMeterReading((AdminFullDTO)userInputPort.getCertainUser("admin"), "Heating");
-        allNamesOfMeterReadingInputPort.addMeterReading((AdminFullDTO)userInputPort.getCertainUser("admin"), "Hot Water");
-        allNamesOfMeterReadingInputPort.addMeterReading((AdminFullDTO)userInputPort.getCertainUser("admin"), "Cold Water");
-
-        /*System.out.println(allNamesOfMeterReadingInputPort.getListOfNamesOfMeterReadings());*/
+        allNamesOfMeterReadingInputPort.addMeterReading(AdminMapper.toDto((Admin) userInputPort.getCertainUser("admin")), "Heating");
+        allNamesOfMeterReadingInputPort.addMeterReading(AdminMapper.toDto((Admin) userInputPort.getCertainUser("admin")), "Hot Water");
+        allNamesOfMeterReadingInputPort.addMeterReading(AdminMapper.toDto((Admin) userInputPort.getCertainUser("admin")), "Cold Water");
 
         Scanner scanner = new Scanner(System.in);
 
@@ -61,10 +62,10 @@ public class ConsoleProgram {
                         System.out.print("Enter password: ");
                         String passwordToLogin = scanner.nextLine();
                         userInputPort.loginUser(usernameToLogin, passwordToLogin);
-                        if(userInputPort.getCertainUser(usernameToLogin) instanceof AdminFullDTO){
-                            workWithAdminAccount((AdminFullDTO)userInputPort.getCertainUser(usernameToLogin), userInputPort, allNamesOfMeterReadingInputPort, scanner);
-                        } else if (userInputPort.getCertainUser(usernameToLogin) instanceof UserFullDTO) {
-                            workWithUserAccount((UserFullDTO)userInputPort.getCertainUser(usernameToLogin), userInputPort, allNamesOfMeterReadingInputPort, scanner);
+                        if(userInputPort.getCertainUser(usernameToLogin) instanceof Admin){
+                            workWithAdminAccount(AdminMapper.toDto((Admin) userInputPort.getCertainUser(usernameToLogin)), userInputPort, allNamesOfMeterReadingInputPort, scanner);
+                        } else if (userInputPort.getCertainUser(usernameToLogin) instanceof User) {
+                            workWithUserAccount((UserMapper.toDto((User) userInputPort.getCertainUser(usernameToLogin))), userInputPort, allNamesOfMeterReadingInputPort, scanner);
                         } else {
                             System.out.println("Incorrect type");
                         }
@@ -92,7 +93,7 @@ public class ConsoleProgram {
      * @param allNamesOfMeterReadingInputPort The AllNamesOfMeterReadingInputPort for meter reading operations.
      * @param scanner                     The Scanner for user input.
      */
-    private static void workWithAdminAccount(AdminFullDTO adminFullDTO, UserInputPort userInputPort, AllNamesOfMeterReadingInputPort allNamesOfMeterReadingInputPort, Scanner scanner){
+    private static void workWithAdminAccount(AdminFullDTO adminFullDTO, UserController userInputPort, AllNamesOfMeterReadingController allNamesOfMeterReadingInputPort, Scanner scanner){
         boolean tempCheak = true;
         while (tempCheak){
             System.out.println("You are Admin!");
@@ -141,7 +142,7 @@ public class ConsoleProgram {
      * @param allNamesOfMeterReadingInputPort The AllNamesOfMeterReadingInputPort for meter reading operations.
      * @param scanner                     The Scanner for user input.
      */
-    private static void workWithUserAccount(UserFullDTO userFullDTO, UserInputPort userInputPort, AllNamesOfMeterReadingInputPort allNamesOfMeterReadingInputPort, Scanner scanner){
+    private static void workWithUserAccount(UserFullDTO userFullDTO, UserController userInputPort, AllNamesOfMeterReadingController allNamesOfMeterReadingInputPort, Scanner scanner){
         boolean tempCheak = true;
         while (tempCheak){
             System.out.println("1. Submit Meter Reading");
@@ -161,17 +162,16 @@ public class ConsoleProgram {
 
                     System.out.print("Year: ");
                     int year = scanner.nextInt();
-                    MeterReadingFullDTO newReading = new MeterReadingFullDTO(month, year);
+                    MeterReading newReading = new MeterReadingImpl(month, year);
                     for(String element: allNamesOfMeterReadingInputPort.getListOfNamesOfMeterReadings()){
                         System.out.print(element + " reading: ");
                         newReading.addReading(element,scanner.nextDouble());
                     }
-
-                    userInputPort.submitMeterReading(userFullDTO,newReading);
+                    userInputPort.submitMeterReading(userFullDTO,MeterReadingMapper.toDto((MeterReadingImpl) newReading));
                     break;
                 case 2:
-                    MeterReadingFullDTO latestReading = userFullDTO.getLatestMeterReading();
-
+                    AbstractUser certainUser = userInputPort.getCertainUser(userFullDTO.getUsername());
+                    MeterReadingFullDTO latestReading = UserMapper.toDto((User)certainUser).getLatestMeterReading();
                     if (latestReading == null) {
                         System.out.println("No meter readings available.");
                     } else {
@@ -182,13 +182,13 @@ public class ConsoleProgram {
                     }
                     break;
                 case 3:
-                    List<MeterReadingFullDTO> readingHistory = userInputPort.viewMeterReadingHistory(userFullDTO);
+                    List<MeterReadingImpl> readingHistory = userInputPort.viewMeterReadingHistory(userFullDTO);
 
                     if (readingHistory.isEmpty()) {
                         System.out.println("No meter readings available.");
                     } else {
                         System.out.println("Meter Reading History:");
-                        for(MeterReadingFullDTO element: readingHistory){
+                        for(MeterReadingImpl element: readingHistory){
                             System.out.println("Month is " + element.getMonth() + " Year is " + element.getYear());
                             for (Map.Entry<String, Double> entry : element.getReadings().entrySet()) {
                                 System.out.println("name of readings " + entry.getKey() + " quantity is " + entry.getValue());

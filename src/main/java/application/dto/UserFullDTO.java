@@ -1,8 +1,9 @@
 package application.dto;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import application.models.MeterReadingImpl;
+import application.models.User;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The UserFullDTO class represents a data transfer object (DTO) for user information,
@@ -17,23 +18,16 @@ public class UserFullDTO extends AbstractUserFullDTO {
     /**
      * Constructs a new UserFullDTO with the specified username and password.
      *
-     * @param username The username of the user.
-     * @param password The password of the user.
+     * @param username      The username of the user.
+     * @param password      The password of the user.
+     * @param meterReadings
      */
+    public UserFullDTO(String username, String password, List<MeterReadingFullDTO> meterReadings) {
+        super(username, password);
+        this.meterReadings = meterReadings;
+    }
     public UserFullDTO(String username, String password) {
         super(username, password);
-    }
-
-    /**
-     * Adds a meter reading to the user's list of readings.
-     *
-     * @param reading The meter reading to be added.
-     */
-    public void addMeterReading(MeterReadingFullDTO reading) {
-        if (meterReadings == null) {
-            meterReadings = new LinkedList<>();
-        }
-        this.meterReadings.add(reading);
     }
 
     /**
@@ -54,16 +48,11 @@ public class UserFullDTO extends AbstractUserFullDTO {
      * @param month The month for which readings are retrieved.
      * @return A list of meter readings for the specified month.
      */
-    public List<MeterReadingFullDTO> getMeterReadingsForMonth(int month) {
-        List<MeterReadingFullDTO> readingsForMonth = new ArrayList<>();
-        for (MeterReadingFullDTO reading : meterReadings) {
-            if (reading.getMonth() == month) {
-                readingsForMonth.add(reading);
-            }
-        }
-        return readingsForMonth;
+    public List<MeterReadingFullDTO> getMeterReadingsForMonth(Integer month) {
+        return meterReadings.stream()
+                .filter(reading -> reading.getMonth() == month)
+                .collect(Collectors.toList());
     }
-
     /**
      * Gets the entire reading history for the user.
      *
@@ -71,5 +60,25 @@ public class UserFullDTO extends AbstractUserFullDTO {
      */
     public List<MeterReadingFullDTO> getMeterReadingHistory() {
         return meterReadings;
+    }
+    /**
+     * Converts UserFullDTO to User.
+     *
+     * @return User object.
+     */
+    public User toUser() {
+        User user = new User(getUsername(), getPassword());
+
+        if (meterReadings != null) {
+            List<MeterReadingImpl> meterReadingList = meterReadings.stream()
+                    .map(MeterReadingFullDTO::toMeterReadingImpl)
+                    .collect(Collectors.toList());
+
+            for (MeterReadingImpl meterReading : meterReadingList) {
+                user.addMeterReading(meterReading);
+            }
+        }
+
+        return user;
     }
 }

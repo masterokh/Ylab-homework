@@ -1,4 +1,4 @@
-package application.in;
+package application.controllers;
 
 import application.dto.AbstractUserFullDTO;
 
@@ -8,7 +8,7 @@ import java.util.Set;
  * Interface defining the input port for managing all names of meter readings.
  * Acts as a boundary between the application's business logic and user interactions.
  */
-public interface AllNamesOfMeterReadingInputPort {
+public interface AllNamesOfMeterReadingController {
 
     /**
      * Adds a new meter reading to the set of all names for admin users.

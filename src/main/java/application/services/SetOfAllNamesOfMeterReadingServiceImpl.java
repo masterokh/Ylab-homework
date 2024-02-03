@@ -2,7 +2,7 @@ package application.services;
 
 import application.dto.AbstractUserFullDTO;
 import application.dto.AdminFullDTO;
-import application.dto.SetOfAllNamesOfMeterReadingImplFullDTO;
+import application.models.SetOfAllNamesOfMeterReadingImpl;
 import java.util.Set;
 
 /**
@@ -12,13 +12,13 @@ import java.util.Set;
  */
 public class SetOfAllNamesOfMeterReadingServiceImpl implements SetOfAllNamesOfMeterReadingService {
 
-    private SetOfAllNamesOfMeterReadingImplFullDTO setOfAllNamesOfMeterReadingImplFullDTO;
+    private SetOfAllNamesOfMeterReadingImpl setOfAllNamesOfMeterReadingImpl;
 
     /**
      * Constructs a SetOfAllNamesOfMeterReadingServiceImpl with an empty set of meter readings.
      */
     public SetOfAllNamesOfMeterReadingServiceImpl() {
-        setOfAllNamesOfMeterReadingImplFullDTO = new SetOfAllNamesOfMeterReadingImplFullDTO();
+        setOfAllNamesOfMeterReadingImpl = new SetOfAllNamesOfMeterReadingImpl();
     }
 
     /**
@@ -29,7 +29,7 @@ public class SetOfAllNamesOfMeterReadingServiceImpl implements SetOfAllNamesOfMe
      */
     public void addMeterReading(AbstractUserFullDTO abstractUserFullDTO, String newMeterReading) {
         if (abstractUserFullDTO instanceof AdminFullDTO) {
-            setOfAllNamesOfMeterReadingImplFullDTO.addMeterReading(newMeterReading);
+            setOfAllNamesOfMeterReadingImpl.addMeterReading(newMeterReading);
         }
     }
 
@@ -39,6 +39,6 @@ public class SetOfAllNamesOfMeterReadingServiceImpl implements SetOfAllNamesOfMe
      * @return A set containing names of all meter readings.
      */
     public Set<String> getListOfNamesOfMeterReadings() {
-        return setOfAllNamesOfMeterReadingImplFullDTO.getListOfNamesOfMeterReadings();
+        return setOfAllNamesOfMeterReadingImpl.getListOfNamesOfMeterReadings();
     }
 }

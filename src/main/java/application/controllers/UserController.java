@@ -1,7 +1,9 @@
-package application.in;
+package application.controllers;
 
 import application.dto.AbstractUserFullDTO;
 import application.dto.MeterReadingFullDTO;
+import application.models.AbstractUser;
+import application.models.MeterReadingImpl;
 import java.util.List;
 import java.util.Map;
 
@@ -9,14 +11,14 @@ import java.util.Map;
  * Represents the interface for user input operations.
  * Acts as a boundary between the application's business logic and user interactions.
  */
-public interface UserInputPort {
+public interface UserController {
 
     /**
      * Retrieves a map of all users in the system.
      *
      * @return A map containing usernames as keys and corresponding user DTOs.
      */
-    Map<String, AbstractUserFullDTO> getUsers();
+    Map<String, AbstractUser> getUsers();
 
     /**
      * Registers a new user in the system.
@@ -71,7 +73,7 @@ public interface UserInputPort {
      * @param abstractUserFullDTO The user for whom to retrieve the meter reading history.
      * @return A list of meter reading data transfer objects representing the history.
      */
-    List<MeterReadingFullDTO> viewMeterReadingHistory(AbstractUserFullDTO abstractUserFullDTO);
+    List<MeterReadingImpl> viewMeterReadingHistory(AbstractUserFullDTO abstractUserFullDTO);
 
     /**
      * Checks if a specific user is available in the system.
@@ -87,5 +89,5 @@ public interface UserInputPort {
      * @param username The username of the user to retrieve.
      * @return The user data transfer object corresponding to the specified username.
      */
-    AbstractUserFullDTO getCertainUser(String username);
+    AbstractUser getCertainUser(String username);
 }

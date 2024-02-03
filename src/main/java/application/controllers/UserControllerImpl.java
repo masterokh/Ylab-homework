@@ -1,16 +1,18 @@
-package application.in;
+package application.controllers;
 
 import application.dto.AbstractUserFullDTO;
 import application.dto.MeterReadingFullDTO;
+import application.models.AbstractUser;
+import application.models.MeterReadingImpl;
 import application.services.AbstractUserService;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Implementation of the {@link UserInputPort} interface.
+ * Implementation of the {@link UserController} interface.
  * Acts as an intermediary between the application's business logic and user input.
  */
-public class UserInputPortImpl implements UserInputPort {
+public class UserControllerImpl implements UserController {
 
     /**
      * The underlying service that provides user-related functionality.
@@ -22,12 +24,12 @@ public class UserInputPortImpl implements UserInputPort {
      *
      * @param abstractUserService The service handling user-related operations.
      */
-    public UserInputPortImpl(AbstractUserService abstractUserService) {
+    public UserControllerImpl(AbstractUserService abstractUserService) {
         this.abstractUserService = abstractUserService;
     }
 
     @Override
-    public Map<String, AbstractUserFullDTO> getUsers() {
+    public Map<String, AbstractUser> getUsers() {
         return abstractUserService.getUsers();
     }
 
@@ -62,7 +64,7 @@ public class UserInputPortImpl implements UserInputPort {
     }
 
     @Override
-    public List<MeterReadingFullDTO> viewMeterReadingHistory(AbstractUserFullDTO abstractUserFullDTO) {
+    public List<MeterReadingImpl> viewMeterReadingHistory(AbstractUserFullDTO abstractUserFullDTO) {
         return abstractUserService.viewMeterReadingHistory(abstractUserFullDTO);
     }
 
@@ -72,7 +74,7 @@ public class UserInputPortImpl implements UserInputPort {
     }
 
     @Override
-    public AbstractUserFullDTO getCertainUser(String username) {
+    public AbstractUser getCertainUser(String username) {
         return abstractUserService.getCertainUser(username);
     }
 }

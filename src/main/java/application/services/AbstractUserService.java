@@ -2,6 +2,8 @@ package application.services;
 
 import application.dto.AbstractUserFullDTO;
 import application.dto.MeterReadingFullDTO;
+import application.models.AbstractUser;
+import application.models.MeterReadingImpl;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +19,7 @@ public interface AbstractUserService {
      *
      * @return A map containing usernames as keys and corresponding user objects.
      */
-    Map<String, AbstractUserFullDTO> getUsers();
+    Map<String, AbstractUser> getUsers();
 
     /**
      * Registers a new user or admin based on the provided user DTO.
@@ -72,7 +74,7 @@ public interface AbstractUserService {
      * @param abstractUserFullDTO The user for whom the meter reading history is retrieved.
      * @return The list of meter readings in the history or null if none is available.
      */
-    List<MeterReadingFullDTO> viewMeterReadingHistory(AbstractUserFullDTO abstractUserFullDTO);
+    List<MeterReadingImpl> viewMeterReadingHistory(AbstractUserFullDTO abstractUserFullDTO);
 
     /**
      * Checks if a user with the provided username is available.
@@ -88,5 +90,5 @@ public interface AbstractUserService {
      * @param username The username of the user to retrieve.
      * @return The user with the provided username or null if not found.
      */
-    AbstractUserFullDTO getCertainUser(String username);
+    AbstractUser getCertainUser(String username);
 }

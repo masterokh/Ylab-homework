@@ -1,15 +1,14 @@
-package application.in;
+package application.controllers;
 
 import application.dto.AbstractUserFullDTO;
 import application.services.SetOfAllNamesOfMeterReadingService;
-
 import java.util.Set;
 
 /**
  * Implementation of the input port for managing all names of meter readings.
  * Acts as a boundary between the application's business logic and user interactions.
  */
-public class AllNamesOfMeterReadingInputPortImpl implements AllNamesOfMeterReadingInputPort {
+public class AllNamesOfMeterReadingControllerImpl implements AllNamesOfMeterReadingController {
 
     private SetOfAllNamesOfMeterReadingService setOfAllNamesOfMeterReadingService;
 
@@ -18,7 +17,7 @@ public class AllNamesOfMeterReadingInputPortImpl implements AllNamesOfMeterReadi
      *
      * @param setOfAllNamesOfMeterReadingService The service responsible for managing all names of meter readings.
      */
-    public AllNamesOfMeterReadingInputPortImpl(SetOfAllNamesOfMeterReadingService setOfAllNamesOfMeterReadingService) {
+    public AllNamesOfMeterReadingControllerImpl(SetOfAllNamesOfMeterReadingService setOfAllNamesOfMeterReadingService) {
         this.setOfAllNamesOfMeterReadingService = setOfAllNamesOfMeterReadingService;
     }
 

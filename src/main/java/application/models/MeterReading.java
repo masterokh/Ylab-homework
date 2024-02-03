@@ -1,5 +1,6 @@
 package application.models;
 
+import application.dto.MeterReadingFullDTO;
 import java.util.Map;
 
 /**
@@ -36,4 +37,16 @@ public interface MeterReading {
      * @param value The value of the meter reading.
      */
     void addReading(String type, double value);
+    /**
+     * Initializes the readings from the given map.
+     *
+     * @param readings The map containing meter readings to be initialized.
+     */
+    void initializeReadings(Map<String, Double> readings);
+    /**
+     * Converts MeterReadingImpl to MeterReadingFullDTO.
+     *
+     * @return The MeterReadingFullDTO object.
+     */
+    MeterReadingFullDTO toDto();
 }

@@ -1,6 +1,6 @@
 package application;
 
-import application.in.ConsoleProgram;
+import application.controllers.ConsoleProgram;
 
 /**
  * The Main class serves as the entry point for the application.

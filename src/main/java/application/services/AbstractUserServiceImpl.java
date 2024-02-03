@@ -1,9 +1,13 @@
 package application.services;
 
 import application.dto.AbstractUserFullDTO;
-import application.dto.AdminFullDTO;
 import application.dto.MeterReadingFullDTO;
 import application.dto.UserFullDTO;
+import application.mappers.MeterReadingMapper;
+import application.models.AbstractUser;
+import application.models.Admin;
+import application.models.MeterReadingImpl;
+import application.models.User;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +19,7 @@ import java.util.Map;
  */
 public class AbstractUserServiceImpl implements AbstractUserService {
 
-    private Map<String, AbstractUserFullDTO> users;
+    private Map<String, AbstractUser> users;
 
     /**
      * Constructs a new AbstractUserServiceImpl with an empty map of users.
@@ -32,7 +36,7 @@ public class AbstractUserServiceImpl implements AbstractUserService {
      */
     public <T extends AbstractUserFullDTO> void registerAbstractUser(T userDTO) {
         if (!users.containsKey(userDTO.getUsername())) {
-            users.put(userDTO.getUsername(), new UserFullDTO(userDTO.getUsername(), userDTO.getPassword()));
+            users.put(userDTO.getUsername(), new User(userDTO.getUsername(), userDTO.getPassword()));
             System.out.println("User registered successfully!");
         } else {
             System.out.println("Username already exists. Please choose another username.");
@@ -47,7 +51,7 @@ public class AbstractUserServiceImpl implements AbstractUserService {
      */
     public void registerNewAdmin(String username, String password) {
         if (!users.containsKey(username)) {
-            users.put(username, new AdminFullDTO(username, password));
+            users.put(username, new Admin(username, password));
             System.out.println("Admin registered successfully!");
         } else {
             System.out.println("Username already exists. Please choose another username.");
@@ -88,7 +92,7 @@ public class AbstractUserServiceImpl implements AbstractUserService {
      *
      * @return The map of registered users.
      */
-    public Map<String, AbstractUserFullDTO> getUsers() {
+    public Map<String, AbstractUser> getUsers() {
         return users;
     }
 
@@ -101,7 +105,7 @@ public class AbstractUserServiceImpl implements AbstractUserService {
     public void submitMeterReading(AbstractUserFullDTO abstractUserFullDTO, MeterReadingFullDTO meterReadingFullDTO) {
         if (abstractUserIsAvailable(abstractUserFullDTO)) {
             if (abstractUserFullDTO instanceof UserFullDTO && meterReadingFullDTO != null) {
-                ((UserFullDTO) abstractUserFullDTO).addMeterReading(meterReadingFullDTO);
+                ((User)users.get(abstractUserFullDTO.getUsername())).addMeterReading(MeterReadingMapper.toMeterReadingImpl(meterReadingFullDTO));
                 System.out.println("Meter reading submitted successfully!");
             } else {
                 System.out.println("Something went wrong, try again");
@@ -138,11 +142,11 @@ public class AbstractUserServiceImpl implements AbstractUserService {
      * @param abstractUserFullDTO The user for whom the meter reading history is retrieved.
      * @return The list of meter readings in the history or null if none is available.
      */
-    public List<MeterReadingFullDTO> viewMeterReadingHistory(AbstractUserFullDTO abstractUserFullDTO) {
+    public List<MeterReadingImpl> viewMeterReadingHistory(AbstractUserFullDTO abstractUserFullDTO) {
         if (abstractUserIsAvailable(abstractUserFullDTO)) {
             if (abstractUserFullDTO instanceof UserFullDTO) {
-                UserFullDTO userFullDTO = (UserFullDTO) users.get(abstractUserFullDTO.getUsername());
-                List<MeterReadingFullDTO> readingHistory = userFullDTO.getMeterReadingHistory();
+                User user = (User) users.get(abstractUserFullDTO.getUsername());
+                List<MeterReadingImpl> readingHistory = user.getMeterReadingHistory();
                 return readingHistory;
             } else {
                 System.out.println("Incorrect type of param");
@@ -170,7 +174,7 @@ public class AbstractUserServiceImpl implements AbstractUserService {
      * @param username The username of the user to retrieve.
      * @return The user with the provided username or null if not found.
      */
-    public AbstractUserFullDTO getCertainUser(String username) {
+    public AbstractUser getCertainUser(String username) {
         return users.get(username);
     }
 }
